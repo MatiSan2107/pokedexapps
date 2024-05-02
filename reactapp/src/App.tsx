@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-
 type Pokemon = {
   id: number
   name: string
 }
 
-const BASE_URL = 'http://localhost:4321/api'
+//  const BASE_URL = 'http://localhost:4321/api'
+const BASE_URL = 'https://localhost:3000' 
 
 export default function App() {
   const [list, setList] = useState<Pokemon[]>([])
@@ -15,15 +15,14 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false
-    fetch(`${BASE_URL}/pokemon.json?page=${page}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled) {
-          setList(data.list)
-          setCount(data.count)
-        }
-      })
-
+    fetch(`${BASE_URL}/pokemon?page=${page}`)
+    .then((res)=>res.json())
+    .then((data)=>{
+      if (!cancelled) {
+        setList(data.list)
+        setCount(data.count)
+      }
+    })
     return () => {
       cancelled = true
     }
@@ -39,7 +38,7 @@ export default function App() {
       name: data.get('name') as string
     }
 
-    await fetch(`${BASE_URL}/pokemon.json`, {
+    await fetch(`${BASE_URL}/pokemon`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -55,7 +54,7 @@ export default function App() {
   }
 
   async function deletePokemon(id: number) {
-    await fetch(`${BASE_URL}/pokemon/${id}.json`, {
+    await fetch(`${BASE_URL}/pokemon/${id}`, {
       method: 'DELETE'
     })
 
@@ -70,7 +69,7 @@ export default function App() {
   return (
     <main className="container mx-auto flex flex-col">
 		<h1 className="text-5xl text-red-600 font-extrabold text-center">Pokedex</h1>
-		<form action="/api/pokemon" method="post" onSubmit={addPokemon}>
+		<form action="/pokemon" method="post" onSubmit={addPokemon}>
 			<h2 className="text-2xl text-red-700 font-bold">Agregar nuevo pokemon</h2>
 			<input type="number" name="id" placeholder="ID" className="my-1 w-full p-2 border border-gray-300 rounded-lg" />
 			<input type="text" name="name" placeholder="Name" className="my-1 w-full p-2 border border-gray-300 rounded-lg" />
